@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
 
 import { MoviedbService } from '../../_services/moviedb.service';
+import { LoaderService } from '../../_services/loader.service';
 
 @Component({
   selector: 'app-movie',
@@ -23,13 +24,15 @@ export class MovieComponent implements OnInit, OnDestroy {
 
   constructor(
     private chRef: ChangeDetectorRef,
-    private moviedbService: MoviedbService
+    private moviedbService: MoviedbService,
+    private loaderService: LoaderService
   ) { }
 
   ngOnInit() { 
     //When calling this method the error.interceptor is activated normally
     //this.getMostPopularMovies();   
 
+    //this.loaderService.display(true);
     //But when I call direct using the AJAX the interceptor doesn't work
      this.dtOptions = {
        // ajax: (dataTablesParameters: any, callback) => {
@@ -49,9 +52,9 @@ export class MovieComponent implements OnInit, OnDestroy {
          params: {
            api_key: this.moviedbService.apiKey
          },
-         dataSrc: 'results'
+         dataSrc: 'results',
          //type: 'GET',
-         //headers: {"Authorization": 'Bearer ' + JSON.parse(localStorage.getItem('authUser'))["token"]}
+         //headers: {"Authorization": 'Bearer ' + JSON.parse(localStorage.getItem('authUser'))["token"]},
        },
        columns: [
          { data: 'title' },
@@ -79,26 +82,19 @@ export class MovieComponent implements OnInit, OnDestroy {
   }
 
   getMostPopularMovies(){
-
-     this.moviedbService.getMostPopularMovies().
-       subscribe((movies: any) => {
-         this.moviesList = movies.results;
+    this.loaderService.display(true);
+    
+    this.moviedbService.getMostPopularMovies().
+      subscribe((movies: any) => {
+        this.moviesList = movies.results;
 
 console.log("====", movies);
 
-        //  this.chRef.detectChanges();
-        //  const table: any = $('table');
-        //  this.movieTable = table.dataTable({
-        //    language: {
-        //      url: '//cdn.datatables.net/plug-ins/1.10.19/i18n/Portuguese-Brasil.json'
-        //    },
-        //    pageLength: 100,
-        //    pagingType: 'full_numbers',
-        //  });
-        
-       }, (error: any) => {
-         console.error("Erro-> ", error);
-     });
+      this.loaderService.display(false);
+      }, (error: any) => {
+        this.loaderService.display(false);
+        console.error("Erro-> ", error);
+    });
   }
 
 }

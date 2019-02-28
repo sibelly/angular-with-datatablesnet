@@ -11,6 +11,8 @@ import { HelloComponent } from './hello.component';
 import { LoginComponent } from './view/login/login.component';
 import { MovieComponent } from './view/movies/movie.component';
 import { MoviedbService } from './_services/moviedb.service';
+import { LoaderComponent } from './_shared/loader.component';
+
 
 @NgModule({
   imports: [ 
@@ -25,7 +27,8 @@ import { MoviedbService } from './_services/moviedb.service';
     AppComponent, 
     HelloComponent,
     LoginComponent,
-    MovieComponent
+    MovieComponent,
+    LoaderComponent
   ],
 
   providers: [
